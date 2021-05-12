@@ -18,7 +18,7 @@ class CityAirQualityService(
 ) {
     fun averageIndex(city: City): Either<ApplicationError, AirQualityIndex> = either.eager {
         val (_, _, coordinates) = cityGeocodingService.getGeoCoordinates(city).bind()
-        val forecasts = airQualityForecastService.getAirQualityForecast(coordinates).toEither { ApplicationError() }.bind()
+        val forecasts = airQualityForecastService.getAirQualityForecast(coordinates).bind()
         AirQualityIndex(
             city.name,
             forecasts.map { forecast -> forecast.index }.average()

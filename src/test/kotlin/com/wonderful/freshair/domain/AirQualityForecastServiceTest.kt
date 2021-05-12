@@ -1,15 +1,16 @@
 package com.wonderful.freshair.domain
 
-import arrow.core.None
-import arrow.core.Some
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNull
 import com.wonderful.freshair.infrastructure.api.OWMAirQualityForecastService
+import assertk.assertions.isInstanceOf
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
+import com.wonderful.freshair.domain.error.ApplicationError
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -60,11 +61,11 @@ class AirQualityForecastServiceTest {
 
         val forecasts = airQualityForecastService.getAirQualityForecast(GeoCoordinates(lat, lon))
 
-        assertThat(forecasts).isEqualTo(Some(expectedAirQualityForecasts))
+        assertThat(forecasts).isEqualTo(expectedAirQualityForecasts.right())
     }
 
     @Test
-    fun `should return none if pollution data is empty`() {
+    fun `should return left if pollution data is empty`() {
         val lat = 41.3888
         val lon = 2.159
         WireMock.stubFor(
@@ -79,6 +80,6 @@ class AirQualityForecastServiceTest {
 
         val airQualityForecasts = airQualityForecastService.getAirQualityForecast(GeoCoordinates(lat, lon))
 
-        assertThat(airQualityForecasts).isEqualTo(None)
+        assertThat(airQualityForecasts).isInstanceOf(ApplicationError().left()::class)
     }
 }

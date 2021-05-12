@@ -1,7 +1,5 @@
 package com.wonderful.freshair.domain
 
-import arrow.core.None
-import arrow.core.Some
 import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
@@ -39,7 +37,7 @@ class CityAirQualityServiceTest {
             AirQualityForecast(1)
         )
         whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(cityGeocoded.right())
-        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(Some(airQualityForecasts))
+        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(airQualityForecasts.right())
 
         val airQualityIndex = cityAirQualityService.averageIndex(city)
 
@@ -64,7 +62,7 @@ class CityAirQualityServiceTest {
         val coordinates = GeoCoordinates(41.0, 2.0)
         val cityGeocoded = CityGeoCoded(cityName, countryCode, coordinates)
         whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(cityGeocoded.right())
-        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(None)
+        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(ApplicationError().left())
 
         assertThat(cityAirQualityService.averageIndex(city)).isInstanceOf(ApplicationError().left()::class.java)
     }

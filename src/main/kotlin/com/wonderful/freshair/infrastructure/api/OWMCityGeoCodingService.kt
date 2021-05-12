@@ -1,6 +1,5 @@
 package com.wonderful.freshair.infrastructure.api
 
-import arrow.core.firstOrNone
 import com.wonderful.freshair.domain.CityGeoCoded
 import com.wonderful.freshair.domain.CityGeoCodingService
 import com.wonderful.freshair.domain.GeoCoordinates
