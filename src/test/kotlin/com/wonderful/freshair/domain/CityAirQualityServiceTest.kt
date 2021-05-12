@@ -38,7 +38,7 @@ class CityAirQualityServiceTest {
             AirQualityForecast(2),
             AirQualityForecast(1)
         )
-        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(Some(cityGeocoded))
+        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(cityGeocoded.right())
         whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(Some(airQualityForecasts))
 
         val airQualityIndex = cityAirQualityService.averageIndex(city)
@@ -51,7 +51,7 @@ class CityAirQualityServiceTest {
         val cityName = "Barcelona"
         val countryCode = "ES"
         val city = City(cityName, countryCode)
-        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(None)
+        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(ApplicationError().left())
 
         assertThat(cityAirQualityService.averageIndex(city)).isInstanceOf(ApplicationError().left()::class)
     }
@@ -63,7 +63,7 @@ class CityAirQualityServiceTest {
         val city = City(cityName, countryCode)
         val coordinates = GeoCoordinates(41.0, 2.0)
         val cityGeocoded = CityGeoCoded(cityName, countryCode, coordinates)
-        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(Some(cityGeocoded))
+        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(cityGeocoded.right())
         whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(None)
 
         assertThat(cityAirQualityService.averageIndex(city)).isInstanceOf(ApplicationError().left()::class.java)
