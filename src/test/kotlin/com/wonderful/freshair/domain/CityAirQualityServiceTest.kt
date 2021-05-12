@@ -2,16 +2,17 @@ package com.wonderful.freshair.domain
 
 import arrow.core.None
 import arrow.core.Some
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNull
 import com.wonderful.freshair.infrastructure.City
+import assertk.assertions.isInstanceOf
+import com.wonderful.freshair.domain.error.ApplicationError
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 class CityAirQualityServiceTest {
 
@@ -42,21 +43,21 @@ class CityAirQualityServiceTest {
 
         val airQualityIndex = cityAirQualityService.averageIndex(city)
 
-        assertThat(airQualityIndex).isEqualTo(Some(AirQualityIndex(cityName, 1.5)))
+        assertThat(airQualityIndex).isEqualTo(AirQualityIndex(cityName, 1.5).right())
     }
 
     @Test
-    fun `should return none if city does not exist`() {
+    fun `should return left if city does not exist`() {
         val cityName = "Barcelona"
         val countryCode = "ES"
         val city = City(cityName, countryCode)
         whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(None)
 
-        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(None)
+        assertThat(cityAirQualityService.averageIndex(city)).isInstanceOf(ApplicationError().left()::class)
     }
 
     @Test
-    fun `should return none if pollution data is empty`() {
+    fun `should return left if pollution data is empty`() {
         val cityName = "Barcelona"
         val countryCode = "ES"
         val city = City(cityName, countryCode)
@@ -65,6 +66,6 @@ class CityAirQualityServiceTest {
         whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(Some(cityGeocoded))
         whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(None)
 
-        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(None)
+        assertThat(cityAirQualityService.averageIndex(city)).isInstanceOf(ApplicationError().left()::class.java)
     }
 }

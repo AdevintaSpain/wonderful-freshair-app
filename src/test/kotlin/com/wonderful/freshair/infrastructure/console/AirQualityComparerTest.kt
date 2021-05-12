@@ -1,10 +1,12 @@
 package com.wonderful.freshair.infrastructure.console
 
-import arrow.core.Some
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.wonderful.freshair.domain.AirQualityIndex
 import com.wonderful.freshair.domain.CityAirQualityService
+import com.wonderful.freshair.domain.error.ApplicationError
 import com.wonderful.freshair.infrastructure.City
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -43,13 +45,31 @@ class AirQualityComparerTest {
         val madridIndex = 1.49
         val cities = listOf("$barcelona,$country", "$madrid,$country")
         whenever(cityAirQualityService.averageIndex(City(barcelona, country)))
-            .thenReturn(Some(AirQualityIndex(barcelona, barcelonaIndex)))
+            .thenReturn(AirQualityIndex(barcelona, barcelonaIndex).right())
         whenever(cityAirQualityService.averageIndex(City(madrid, country)))
-            .thenReturn(Some(AirQualityIndex(madrid, madridIndex)))
+            .thenReturn(AirQualityIndex(madrid, madridIndex).right())
 
         airQualityComparer.compare(cities)
 
         assertThat(outputStreamCaptor.toString().trim())
             .isEqualTo("$barcelona has the cleaner air quality index.")
+    }
+
+    @Test
+    fun `should fail if cannot compute air quality for a city`() {
+        val country = "ES"
+        val barcelona = "Barcelona"
+        val barcelonaIndex = 1.50
+        val madrid = "Madrid"
+        val cities = listOf("$barcelona,$country", "$madrid,$country")
+        whenever(cityAirQualityService.averageIndex(City(barcelona, country)))
+            .thenReturn(AirQualityIndex(barcelona, barcelonaIndex).right())
+        whenever(cityAirQualityService.averageIndex(City(madrid, country)))
+            .thenReturn(ApplicationError().left())
+
+        airQualityComparer.compare(cities)
+
+        assertThat(outputStreamCaptor.toString().trim())
+            .isEqualTo("Cannot compare air quality due to application error.")
     }
 }

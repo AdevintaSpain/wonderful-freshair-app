@@ -1,8 +1,9 @@
 package com.wonderful.freshair.infrastructure.console
 
-import arrow.core.filterOption
 import com.wonderful.freshair.domain.CityAirQualityService
 import com.wonderful.freshair.infrastructure.City
+import arrow.core.getOrElse
+import arrow.core.sequenceEither
 
 class AirQualityComputation(
     private val cityAirQualityService: CityAirQualityService
@@ -11,7 +12,8 @@ class AirQualityComputation(
         cities
             .map { City.fromParameter(it) }
             .map { cityAirQualityService.averageIndex(it) }
-            .filterOption()
+            .sequenceEither()
+            .getOrElse { listOf() }
             .forEach { println("${it.cityName} average air quality index forecast is ${it.index}") }
     }
 }
