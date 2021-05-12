@@ -67,4 +67,23 @@ class AirQualityComputationTest {
 
         assertThat(outputStreamCaptor.toString().trim()).isEmpty()
     }
+
+    @Test
+    fun `should omit output for cities with errors`() {
+        val barcelona = "Barcelon"
+        val madrid = "Madrid"
+        val country = "ES"
+        val cities = listOf("$barcelona,$country", "$madrid,$country")
+        val index = 1.50
+        val expectedIndex = BigDecimal(index).setScale(2, RoundingMode.HALF_UP)
+        whenever(cityAirQualityService.averageIndex(City(barcelona, country)))
+            .thenReturn(ApplicationError().left())
+        whenever(cityAirQualityService.averageIndex(City(madrid, country)))
+            .thenReturn(AirQualityIndex(madrid, index).right())
+
+        airQualityComputation.compute(cities)
+
+        assertThat(outputStreamCaptor.toString().trim())
+            .isEqualTo("$madrid average air quality index forecast is $expectedIndex")
+    }
 }
