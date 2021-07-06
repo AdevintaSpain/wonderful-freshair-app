@@ -1,0 +1,2 @@
+./gradlew -q installDist
+./build/install/wonderful-freshair-app/bin/wonderful-freshair-app $@

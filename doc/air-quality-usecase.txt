@@ -1,0 +1,33 @@
+# created with https://sequencediagram.org/
+
+title Air Quality Use Case
+
+actor User
+participant "FreshAir\nApplication" as FreshAirApp
+participant "AirQuality\nComputation" as AirQualityComputation
+participant "CityAirQuality\nService" as CityAirQualityService
+participant "CityGeoCoding\nService" as CityGeoCodingService
+participant "AirQualityForecast\nService" as AirQualityForecastService
+participant "🌍 api.openweathermap.org" as OWM
+
+User->FreshAirApp:freshair \-\-city <color:#blue>City1</color> <color:#blue>City2</color> ... <color:#blue>CityN</color>
+
+FreshAirApp->AirQualityComputation:compute List<<color:#blue>String</color>>
+
+loop for each String
+AirQualityComputation->AirQualityComputation:create <color:#blue>City</color> from <color:#blue>String</color>
+note over AirQualityComputation:<color:#blue>City</color>: (name, country)
+AirQualityComputation->CityAirQualityService:averageIndex of <color:#blue>City</color>
+CityAirQualityService->CityGeoCodingService:getGeoCoordinates of <color:#blue>City</color>
+CityGeoCodingService->OWM:GET geo/1.0/direct
+CityGeoCodingService-->CityAirQualityService:return <color:#blue>GeoCoordinates</color>
+note over CityAirQualityService:<color:#blue>GeoCoordinates</color>: (lat, lon)
+CityAirQualityService->AirQualityForecastService:getAirQualityForecast of <color:#blue>GeoCoordinates</color>
+AirQualityForecastService->OWM:GET /data/2.5/air_pollution/forecast
+AirQualityForecastService-->CityAirQualityService:return List<<color:#blue>AirQualityForecast</color>>
+note over CityAirQualityService:<color:#blue>AirQualityForecast</color>: (index)
+CityAirQualityService-->AirQualityComputation:return <color:#blue>AirQualityIndex</color> as average of List<<color:#blue>AirQualityForecast</color>>
+note over AirQualityComputation:<color:#blue>AirQualityIndex</color>: (cityName, index)
+AirQualityComputation->AirQualityComputation:print <color:#blue>AirQualityIndex</color>
+end
+
