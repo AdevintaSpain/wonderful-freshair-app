@@ -1,4 +1,5 @@
 # 🦄 Wonderful FreshAir Application
+[![Java CI with Gradle](https://github.com/AdevintaSpain/wonderful-freshair-app/actions/workflows/gradle.yml/badge.svg)](https://github.com/AdevintaSpain/wonderful-freshair-app/actions/workflows/gradle.yml)
 
 Sample to play with [Kotlin](https://kotlinlang.org/) & [Arrow](https://arrow-kt.io/)
 
