@@ -43,5 +43,5 @@ tasks.withType<Test> {
 }
 
 application {
-	mainClass.set("com.ada.freshair.FreshAirApplicationKt")
+	mainClass.set("com.wonderful.freshair.FreshAirApplicationKt")
 }
