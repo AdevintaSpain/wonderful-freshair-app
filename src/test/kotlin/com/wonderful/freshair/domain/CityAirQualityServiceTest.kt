@@ -1,7 +1,10 @@
 package com.wonderful.freshair.domain
 
+import arrow.core.None
+import arrow.core.Some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNull
 import com.wonderful.freshair.infrastructure.City
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -34,12 +37,34 @@ class CityAirQualityServiceTest {
             AirQualityForecast(2),
             AirQualityForecast(1)
         )
-        val expectedAverageAitQualityIndex = BigDecimal(1.50).setScale(2, RoundingMode.HALF_UP)
-        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(cityGeocoded)
-        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(airQualityForecasts)
+        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(Some(cityGeocoded))
+        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(Some(airQualityForecasts))
 
-        val airQualityIndex: AirQualityIndex = cityAirQualityService.averageIndex(city)
+        val airQualityIndex = cityAirQualityService.averageIndex(city)
 
-        assertThat(airQualityIndex.index).isEqualTo(expectedAverageAitQualityIndex)
+        assertThat(airQualityIndex).isEqualTo(Some(AirQualityIndex(cityName, 1.5)))
+    }
+
+    @Test
+    fun `should return none if city does not exist`() {
+        val cityName = "Barcelona"
+        val countryCode = "ES"
+        val city = City(cityName, countryCode)
+        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(None)
+
+        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(None)
+    }
+
+    @Test
+    fun `should return none if pollution data is empty`() {
+        val cityName = "Barcelona"
+        val countryCode = "ES"
+        val city = City(cityName, countryCode)
+        val coordinates = GeoCoordinates(41.0, 2.0)
+        val cityGeocoded = CityGeoCoded(cityName, countryCode, coordinates)
+        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(Some(cityGeocoded))
+        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(None)
+
+        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(None)
     }
 }

@@ -1,5 +1,9 @@
 package com.wonderful.freshair.infrastructure.api
 
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.toOption
 import com.wonderful.freshair.domain.AirQualityForecast
 import com.wonderful.freshair.domain.AirQualityForecastService
 import com.wonderful.freshair.domain.GeoCoordinates
@@ -26,7 +30,7 @@ class OWMAirQualityForecastService(
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 
-    override fun getAirQualityForecast(coordinates: GeoCoordinates): List<AirQualityForecast> {
+    override fun getAirQualityForecast(coordinates: GeoCoordinates): Option<List<AirQualityForecast>> {
         val request = HttpRequest.newBuilder()
             .uri(URL(
                 baseUrl,
@@ -43,6 +47,8 @@ class OWMAirQualityForecastService(
         return airQualityForecasts
             .list
             .map { AirQualityForecast(it.main.aqi) }
+            .ifEmpty { null }
+            .toOption()
     }
 
 }

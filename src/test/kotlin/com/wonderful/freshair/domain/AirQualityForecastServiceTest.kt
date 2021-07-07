@@ -1,7 +1,10 @@
 package com.wonderful.freshair.domain
 
+import arrow.core.None
+import arrow.core.Some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNull
 import com.wonderful.freshair.infrastructure.api.OWMAirQualityForecastService
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
@@ -39,7 +42,7 @@ class AirQualityForecastServiceTest {
     fun `should get forecast for air quality`() {
         val lat = 41.3888
         val lon = 2.159
-        val expectedAirQualityForecasts : List<AirQualityForecast> = listOf(
+        val expectedAirQualityForecasts: List<AirQualityForecast> = listOf(
             AirQualityForecast(index = 2),
             AirQualityForecast(index = 2),
             AirQualityForecast(index = 1),
@@ -55,9 +58,27 @@ class AirQualityForecastServiceTest {
                 )
         )
 
-        val airQualityForecasts: List<AirQualityForecast> =
-            airQualityForecastService.getAirQualityForecast(GeoCoordinates(lat, lon))
+        val forecasts = airQualityForecastService.getAirQualityForecast(GeoCoordinates(lat, lon))
 
-        assertThat(airQualityForecasts).isEqualTo(expectedAirQualityForecasts)
+        assertThat(forecasts).isEqualTo(Some(expectedAirQualityForecasts))
+    }
+
+    @Test
+    fun `should return none if pollution data is empty`() {
+        val lat = 41.3888
+        val lon = 2.159
+        WireMock.stubFor(
+            WireMock.get("/data/2.5/air_pollution/forecast?lat=$lat&lon=$lon&appid=$apiKey")
+                .willReturn(
+                    WireMock.aResponse()
+                        .withBodyFile("barcelona-airpollution-empty.json")
+                        .withTransformerParameter("lat", lat)
+                        .withTransformerParameter("lon", lon)
+                )
+        )
+
+        val airQualityForecasts = airQualityForecastService.getAirQualityForecast(GeoCoordinates(lat, lon))
+
+        assertThat(airQualityForecasts).isEqualTo(None)
     }
 }
