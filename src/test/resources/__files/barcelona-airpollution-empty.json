@@ -1,0 +1,7 @@
+{
+  "coord": {
+    "lon": "{{parameters.lon}}",
+    "lat": "{{parameters.lat}}"
+  },
+  "list": []
+}

@@ -16,6 +16,10 @@ repositories {
 }
 
 dependencies {
+
+	// Arrow
+	implementation("io.arrow-kt:arrow-core:0.13.2")
+
 	// JSON
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3")
 
