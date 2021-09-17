@@ -5,9 +5,6 @@ import arrow.core.left
 import assertk.assertAll
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.wonderful.freshair.infrastructure.City
-import com.wonderful.freshair.infrastructure.api.OWMCityGeoCodingService
-import assertk.assertions.isInstanceOf
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -17,7 +14,9 @@ import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
-import com.wonderful.freshair.domain.error.ApplicationError
+import com.wonderful.freshair.domain.error.CityNotFoundError
+import com.wonderful.freshair.infrastructure.City
+import com.wonderful.freshair.infrastructure.api.OWMCityGeoCodingService
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -87,6 +86,6 @@ class CityGeoCodingServiceTest {
                 )
         )
 
-        assertThat(cityGeoCodingService.getGeoCoordinates(city)).isInstanceOf(ApplicationError().left()::class)
+        assertThat(cityGeoCodingService.getGeoCoordinates(city)).isEqualTo(CityNotFoundError.left())
     }
 }

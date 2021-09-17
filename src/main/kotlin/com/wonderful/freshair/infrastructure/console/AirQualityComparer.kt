@@ -1,10 +1,11 @@
 package com.wonderful.freshair.infrastructure.console
 
+import arrow.core.Either.Left
+import arrow.core.Either.Right
+import arrow.core.sequenceEither
 import com.wonderful.freshair.domain.AirQualityIndex
 import com.wonderful.freshair.domain.CityAirQualityService
 import com.wonderful.freshair.infrastructure.City
-import arrow.core.getOrElse
-import arrow.core.sequenceEither
 
 class AirQualityComparer(
     private val cityAirQualityService: CityAirQualityService
@@ -15,12 +16,16 @@ class AirQualityComparer(
             .map { City.fromParameter(it) }
             .map { cityAirQualityService.averageIndex(it) }
             .sequenceEither()
-            .getOrElse { listOf() }
-            .maxWithOrNull(Comparator.comparing(AirQualityIndex::index))
 
-        if (airQualityIndex != null)
-            println("${airQualityIndex.cityName} has the cleaner air quality index.")
-        else
-            println("Cannot compare air quality due to application error.")
+        when (airQualityIndex) {
+            is Left -> println("Cannot compare air quality due to error ${airQualityIndex.value.javaClass.simpleName}.")
+            is Right -> {
+                val cleanestCity = airQualityIndex.value.maxWithOrNull(Comparator.comparing(AirQualityIndex::index))
+                if (cleanestCity != null)
+                    println("${cleanestCity.cityName} has the cleaner air quality index.")
+                else
+                    println("City list is empty.")
+            }
+        }
     }
 }

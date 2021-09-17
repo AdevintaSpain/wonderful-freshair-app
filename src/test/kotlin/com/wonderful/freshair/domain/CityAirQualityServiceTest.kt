@@ -4,9 +4,9 @@ import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import com.wonderful.freshair.domain.error.CityNotFoundError
+import com.wonderful.freshair.domain.error.EmptyPollutionDataError
 import com.wonderful.freshair.infrastructure.City
-import assertk.assertions.isInstanceOf
-import com.wonderful.freshair.domain.error.ApplicationError
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
@@ -49,9 +49,9 @@ class CityAirQualityServiceTest {
         val cityName = "Barcelona"
         val countryCode = "ES"
         val city = City(cityName, countryCode)
-        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(ApplicationError().left())
+        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(CityNotFoundError.left())
 
-        assertThat(cityAirQualityService.averageIndex(city)).isInstanceOf(ApplicationError().left()::class)
+        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(CityNotFoundError.left())
     }
 
     @Test
@@ -62,8 +62,8 @@ class CityAirQualityServiceTest {
         val coordinates = GeoCoordinates(41.0, 2.0)
         val cityGeocoded = CityGeoCoded(cityName, countryCode, coordinates)
         whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(cityGeocoded.right())
-        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(ApplicationError().left())
+        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(EmptyPollutionDataError.left())
 
-        assertThat(cityAirQualityService.averageIndex(city)).isInstanceOf(ApplicationError().left()::class.java)
+        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(EmptyPollutionDataError.left())
     }
 }

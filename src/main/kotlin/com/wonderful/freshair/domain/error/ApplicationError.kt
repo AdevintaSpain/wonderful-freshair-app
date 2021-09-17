@@ -1,3 +1,5 @@
 package com.wonderful.freshair.domain.error
 
-class ApplicationError
+sealed class ApplicationError
+object CityNotFoundError: ApplicationError()
+object EmptyPollutionDataError: ApplicationError()

@@ -1,15 +1,16 @@
 package com.wonderful.freshair.infrastructure.api
 
-import com.wonderful.freshair.domain.CityGeoCoded
-import com.wonderful.freshair.domain.CityGeoCodingService
-import com.wonderful.freshair.domain.GeoCoordinates
-import com.wonderful.freshair.infrastructure.City
 import arrow.core.Either
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.wonderful.freshair.domain.CityGeoCoded
+import com.wonderful.freshair.domain.CityGeoCodingService
+import com.wonderful.freshair.domain.GeoCoordinates
 import com.wonderful.freshair.domain.error.ApplicationError
+import com.wonderful.freshair.domain.error.CityNotFoundError
+import com.wonderful.freshair.infrastructure.City
 import java.net.URL
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -46,7 +47,7 @@ class OWMCityGeoCodingService(
                     GeoCoordinates(it.lat, it.lon)
                 )
             }.firstOrNull()
-        ).mapLeft { ApplicationError() }
+        ).mapLeft { CityNotFoundError }
     }
 
 }

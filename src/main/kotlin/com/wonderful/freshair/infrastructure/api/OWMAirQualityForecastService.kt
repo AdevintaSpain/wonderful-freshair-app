@@ -11,6 +11,7 @@ import com.wonderful.freshair.domain.AirQualityForecast
 import com.wonderful.freshair.domain.AirQualityForecastService
 import com.wonderful.freshair.domain.GeoCoordinates
 import com.wonderful.freshair.domain.error.ApplicationError
+import com.wonderful.freshair.domain.error.EmptyPollutionDataError
 import java.net.URL
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -46,7 +47,7 @@ class OWMAirQualityForecastService(
             .list
             .map { AirQualityForecast(it.main.aqi) }
 
-        return if (forecasts.isEmpty()) ApplicationError().left() else forecasts.right()
+        return if (forecasts.isEmpty()) EmptyPollutionDataError.left() else forecasts.right()
 
     }
 
