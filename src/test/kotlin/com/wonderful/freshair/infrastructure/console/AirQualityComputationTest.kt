@@ -1,12 +1,14 @@
 package com.wonderful.freshair.infrastructure.console
 
-import arrow.core.None
-import arrow.core.Some
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import com.wonderful.freshair.domain.AirQualityIndex
 import com.wonderful.freshair.domain.CityAirQualityService
+import com.wonderful.freshair.domain.error.CityNotFoundError
+import com.wonderful.freshair.domain.error.EmptyPollutionDataError
 import com.wonderful.freshair.infrastructure.City
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -46,7 +48,8 @@ class AirQualityComputationTest {
         val cities = listOf("$city,$country")
         val index = 1.50
         val expectedIndex = BigDecimal(index).setScale(2, RoundingMode.HALF_UP)
-        whenever(cityAirQualityService.averageIndex(City(city, country))).thenReturn(Some(AirQualityIndex(city, index)))
+        whenever(cityAirQualityService.averageIndex(City(city, country)))
+            .thenReturn(AirQualityIndex(city, index).right())
 
         airQualityComputation.compute(cities)
 
@@ -59,10 +62,29 @@ class AirQualityComputationTest {
         val city = "Barcelon"
         val country = "ES"
         val cities = listOf("$city,$country")
-        whenever(cityAirQualityService.averageIndex(City(city, country))).thenReturn(None)
+        whenever(cityAirQualityService.averageIndex(City(city, country))).thenReturn(EmptyPollutionDataError.left())
 
         airQualityComputation.compute(cities)
 
         assertThat(outputStreamCaptor.toString().trim()).isEmpty()
+    }
+
+    @Test
+    fun `should omit output for cities with errors`() {
+        val barcelona = "Barcelon"
+        val madrid = "Madrid"
+        val country = "ES"
+        val cities = listOf("$barcelona,$country", "$madrid,$country")
+        val index = 1.50
+        val expectedIndex = BigDecimal(index).setScale(2, RoundingMode.HALF_UP)
+        whenever(cityAirQualityService.averageIndex(City(barcelona, country)))
+            .thenReturn(CityNotFoundError.left())
+        whenever(cityAirQualityService.averageIndex(City(madrid, country)))
+            .thenReturn(AirQualityIndex(madrid, index).right())
+
+        airQualityComputation.compute(cities)
+
+        assertThat(outputStreamCaptor.toString().trim())
+            .isEqualTo("$madrid average air quality index forecast is $expectedIndex")
     }
 }

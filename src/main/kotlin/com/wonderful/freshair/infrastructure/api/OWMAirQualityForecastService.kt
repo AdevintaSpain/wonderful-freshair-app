@@ -1,16 +1,17 @@
 package com.wonderful.freshair.infrastructure.api
 
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
-import arrow.core.toOption
-import com.wonderful.freshair.domain.AirQualityForecast
-import com.wonderful.freshair.domain.AirQualityForecastService
-import com.wonderful.freshair.domain.GeoCoordinates
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.wonderful.freshair.domain.AirQualityForecast
+import com.wonderful.freshair.domain.AirQualityForecastService
+import com.wonderful.freshair.domain.GeoCoordinates
+import com.wonderful.freshair.domain.error.ApplicationError
+import com.wonderful.freshair.domain.error.EmptyPollutionDataError
 import java.net.URL
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -30,7 +31,7 @@ class OWMAirQualityForecastService(
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 
-    override fun getAirQualityForecast(coordinates: GeoCoordinates): Option<List<AirQualityForecast>> {
+    override fun getAirQualityForecast(coordinates: GeoCoordinates): Either<ApplicationError, List<AirQualityForecast>> {
         val request = HttpRequest.newBuilder()
             .uri(URL(
                 baseUrl,
@@ -42,13 +43,12 @@ class OWMAirQualityForecastService(
         val response: HttpResponse<String> = HttpClient.newHttpClient()
             .send(request, HttpResponse.BodyHandlers.ofString())
 
-        val airQualityForecasts: OMWAirQualityForecasts = objectMapper.readValue(response.body())
-
-        return airQualityForecasts
+        val forecasts = objectMapper.readValue<OMWAirQualityForecasts>(response.body())
             .list
             .map { AirQualityForecast(it.main.aqi) }
-            .ifEmpty { null }
-            .toOption()
+
+        return if (forecasts.isEmpty()) EmptyPollutionDataError.left() else forecasts.right()
+
     }
 
 }

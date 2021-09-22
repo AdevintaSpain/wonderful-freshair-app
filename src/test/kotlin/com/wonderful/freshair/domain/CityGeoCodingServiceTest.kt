@@ -1,14 +1,10 @@
 package com.wonderful.freshair.domain
 
-import arrow.core.None
-import arrow.core.orElse
+import arrow.core.getOrHandle
+import arrow.core.left
 import assertk.assertAll
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNull
-import assertk.assertions.prop
-import com.wonderful.freshair.infrastructure.City
-import com.wonderful.freshair.infrastructure.api.OWMCityGeoCodingService
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -18,6 +14,9 @@ import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
+import com.wonderful.freshair.domain.error.CityNotFoundError
+import com.wonderful.freshair.infrastructure.City
+import com.wonderful.freshair.infrastructure.api.OWMCityGeoCodingService
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -71,11 +70,11 @@ class CityGeoCodingServiceTest {
                     assertThat(it.countryCode).isEqualTo(cityCountry)
                     assertThat(it.coordinates).isEqualTo(GeoCoordinates(lat, lon))
                 }
-            }.orElse { fail("Should no be None.") }
+            }.getOrHandle { fail("Should no be None.") }
     }
 
     @Test
-    fun `should return none when city does not exist`() {
+    fun `should return left when city does not exist`() {
         val cityName = "Barcelona"
         val cityCountry = "ES"
         val city = City(name = cityName, country = cityCountry)
@@ -87,6 +86,6 @@ class CityGeoCodingServiceTest {
                 )
         )
 
-        assertThat(cityGeoCodingService.getGeoCoordinates(city)).isEqualTo(None)
+        assertThat(cityGeoCodingService.getGeoCoordinates(city)).isEqualTo(CityNotFoundError.left())
     }
 }

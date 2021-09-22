@@ -1,17 +1,16 @@
 package com.wonderful.freshair.domain
 
-import arrow.core.None
-import arrow.core.Some
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNull
+import com.wonderful.freshair.domain.error.CityNotFoundError
+import com.wonderful.freshair.domain.error.EmptyPollutionDataError
 import com.wonderful.freshair.infrastructure.City
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 class CityAirQualityServiceTest {
 
@@ -37,34 +36,34 @@ class CityAirQualityServiceTest {
             AirQualityForecast(2),
             AirQualityForecast(1)
         )
-        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(Some(cityGeocoded))
-        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(Some(airQualityForecasts))
+        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(cityGeocoded.right())
+        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(airQualityForecasts.right())
 
         val airQualityIndex = cityAirQualityService.averageIndex(city)
 
-        assertThat(airQualityIndex).isEqualTo(Some(AirQualityIndex(cityName, 1.5)))
+        assertThat(airQualityIndex).isEqualTo(AirQualityIndex(cityName, 1.5).right())
     }
 
     @Test
-    fun `should return none if city does not exist`() {
+    fun `should return left if city does not exist`() {
         val cityName = "Barcelona"
         val countryCode = "ES"
         val city = City(cityName, countryCode)
-        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(None)
+        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(CityNotFoundError.left())
 
-        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(None)
+        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(CityNotFoundError.left())
     }
 
     @Test
-    fun `should return none if pollution data is empty`() {
+    fun `should return left if pollution data is empty`() {
         val cityName = "Barcelona"
         val countryCode = "ES"
         val city = City(cityName, countryCode)
         val coordinates = GeoCoordinates(41.0, 2.0)
         val cityGeocoded = CityGeoCoded(cityName, countryCode, coordinates)
-        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(Some(cityGeocoded))
-        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(None)
+        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(cityGeocoded.right())
+        whenever(airQualityForecastService.getAirQualityForecast(coordinates)).thenReturn(EmptyPollutionDataError.left())
 
-        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(None)
+        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(EmptyPollutionDataError.left())
     }
 }
