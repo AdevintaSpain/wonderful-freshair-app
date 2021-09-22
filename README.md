@@ -6,6 +6,7 @@ Sample to play with [Kotlin](https://kotlinlang.org/) & [Arrow](https://arrow-kt
 ## How it was made?
 
 * Session #1 "Modelando Ausencia de Valor" [on youtube](https://youtu.be/q52oo2KOQYo) and [pull request changes](https://github.com/AdevintaSpain/wonderful-freshair-app/pull/1)
+* Session #2 "Gestión Funcional de Errores" [on youtube](https://youtu.be/8RD_G6aY7Nk) and [pull request changes](https://github.com/AdevintaSpain/wonderful-freshair-app/pull/2)
 
 ## Run
 
@@ -25,4 +26,5 @@ $Env:OWM_APIKEY="xxxx"
 
 ## Use Cases
 
-![air-quality-usecase](doc/air-quality-usecase.png)
+![air-quality-computation-usecase](doc/air-quality-computation-usecase.png)
+![air-quality-comparer-usecase](doc/air-quality-comparer-usecase.png)
