@@ -4,6 +4,8 @@
 
 Sample to play with [Kotlin](https://kotlinlang.org/) & [Arrow](https://arrow-kt.io/)
 
+Check our [discussions page](https://github.com/AdevintaSpain/wonderful-freshair-app/discussions) out 👀
+
 ## How it was made?
 
 * Session #1 "Modelando Ausencia de Valor" [on youtube](https://youtu.be/q52oo2KOQYo) and [pull request changes](https://github.com/AdevintaSpain/wonderful-freshair-app/pull/1)
