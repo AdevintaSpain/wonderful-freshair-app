@@ -13,7 +13,7 @@ Check our [discussions page](https://github.com/AdevintaSpain/wonderful-freshair
 
 ## Run
 
-Get your OpenWeatherMap API key from [https://openweathermap.org/api]()
+Get your OpenWeatherMap API key from [https://openweathermap.org/api](https://openweathermap.org/api)
 
 * Linux/MacOS
 ```bash
