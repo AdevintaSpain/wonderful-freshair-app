@@ -1,6 +1,7 @@
 package com.wonderful.freshair.infrastructure.console
 
 import arrow.core.left
+import arrow.core.nonEmptyListOf
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
@@ -43,7 +44,7 @@ class AirQualityComparerTest {
         val barcelonaIndex = 1.50
         val madrid = "Madrid"
         val madridIndex = 1.49
-        val cities = listOf("$barcelona,$country", "$madrid,$country")
+        val cities = nonEmptyListOf("$barcelona,$country", "$madrid,$country")
         whenever(cityAirQualityService.averageIndex(City(barcelona, country)))
             .thenReturn(AirQualityIndex(barcelona, barcelonaIndex).right())
         whenever(cityAirQualityService.averageIndex(City(madrid, country)))
@@ -61,7 +62,7 @@ class AirQualityComparerTest {
         val barcelona = "Barcelona"
         val barcelonaIndex = 1.50
         val madrid = "Madrid"
-        val cities = listOf("$barcelona,$country", "$madrid,$country")
+        val cities = nonEmptyListOf("$barcelona,$country", "$madrid,$country")
         whenever(cityAirQualityService.averageIndex(City(barcelona, country)))
             .thenReturn(AirQualityIndex(barcelona, barcelonaIndex).right())
         whenever(cityAirQualityService.averageIndex(City(madrid, country)))

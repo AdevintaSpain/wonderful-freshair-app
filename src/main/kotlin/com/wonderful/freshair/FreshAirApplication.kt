@@ -1,5 +1,8 @@
 package com.wonderful.freshair
 
+import arrow.core.NonEmptyList
+import arrow.core.None
+import arrow.core.Some
 import com.wonderful.freshair.domain.AirQualityForecastService
 import com.wonderful.freshair.domain.CityAirQualityService
 import com.wonderful.freshair.domain.CityGeoCodingService
@@ -26,14 +29,17 @@ fun main(args: Array<String>) {
   }.first
 
   for (argument in arguments.keys) {
-    val cities = arguments[argument] ?: emptyList()
-    if (cities.isEmpty()) {
-      println("City list should not be empty.")
-      break
-    }
-    when (argument) {
-      "--city" -> airQualityComputation.compute(cities)
-      "--compare" -> airQualityComparer.compare(cities)
+    when (val cities = NonEmptyList.fromList(arguments[argument] ?: emptyList())) {
+      is None -> {
+        println("City list should not be empty.")
+        break
+      }
+      is Some -> {
+        when (argument) {
+          "--city" -> airQualityComputation.compute(cities.value)
+          "--compare" -> airQualityComparer.compare(cities.value)
+        }
+      }
     }
   }
 }

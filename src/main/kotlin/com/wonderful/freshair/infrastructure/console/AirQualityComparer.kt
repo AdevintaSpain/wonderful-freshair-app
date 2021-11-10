@@ -1,5 +1,6 @@
 package com.wonderful.freshair.infrastructure.console
 
+import arrow.core.NonEmptyList
 import arrow.core.computations.either
 import arrow.core.getOrHandle
 import arrow.core.sequenceEither
@@ -12,7 +13,7 @@ class AirQualityComparer(
     private val cityAirQualityService: CityAirQualityService
 ) {
 
-    fun compare(cities: List<String>): Unit = either.eager<ApplicationError, Unit> {
+    fun compare(cities: NonEmptyList<String>): Unit = either.eager<ApplicationError, Unit> {
         val airQualityIndex = cities
             .map { City.fromParameter(it) }
             .map { cityAirQualityService.averageIndex(it) }

@@ -1,6 +1,7 @@
 package com.wonderful.freshair.infrastructure.console
 
 import arrow.core.left
+import arrow.core.nonEmptyListOf
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEmpty
@@ -45,7 +46,7 @@ class AirQualityComputationTest {
     fun `should compute average air quality index`() {
         val city = "Barcelona"
         val country = "ES"
-        val cities = listOf("$city,$country")
+        val cities = nonEmptyListOf("$city,$country")
         val index = 1.50
         val expectedIndex = BigDecimal(index).setScale(2, RoundingMode.HALF_UP)
         whenever(cityAirQualityService.averageIndex(City(city, country)))
@@ -61,7 +62,7 @@ class AirQualityComputationTest {
     fun `should omit output when no data`() {
         val city = "Barcelon"
         val country = "ES"
-        val cities = listOf("$city,$country")
+        val cities = nonEmptyListOf("$city,$country")
         whenever(cityAirQualityService.averageIndex(City(city, country))).thenReturn(EmptyPollutionDataError.left())
 
         airQualityComputation.compute(cities)
@@ -74,7 +75,7 @@ class AirQualityComputationTest {
         val barcelona = "Barcelon"
         val madrid = "Madrid"
         val country = "ES"
-        val cities = listOf("$barcelona,$country", "$madrid,$country")
+        val cities = nonEmptyListOf("$barcelona,$country", "$madrid,$country")
         val index = 1.50
         val expectedIndex = BigDecimal(index).setScale(2, RoundingMode.HALF_UP)
         whenever(cityAirQualityService.averageIndex(City(barcelona, country)))
