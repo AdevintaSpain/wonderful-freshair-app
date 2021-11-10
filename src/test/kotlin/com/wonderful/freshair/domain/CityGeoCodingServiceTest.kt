@@ -14,7 +14,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
-import com.wonderful.freshair.domain.error.CityNotFoundError
+import com.wonderful.freshair.domain.error.ApplicationError.CityNotFoundError
 import com.wonderful.freshair.infrastructure.City
 import com.wonderful.freshair.infrastructure.api.OWMCityGeoCodingService
 import org.junit.jupiter.api.Assertions.fail
@@ -86,6 +86,6 @@ class CityGeoCodingServiceTest {
                 )
         )
 
-        assertThat(cityGeoCodingService.getGeoCoordinates(city)).isEqualTo(CityNotFoundError.left())
+        assertThat(cityGeoCodingService.getGeoCoordinates(city)).isEqualTo(CityNotFoundError(city).left())
     }
 }

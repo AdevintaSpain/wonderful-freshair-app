@@ -16,7 +16,7 @@ class AirQualityComparer(
             .map { cityAirQualityService.averageIndex(it) }
             .sequenceEither()
             .fold(
-                { error -> println("Cannot compare air quality due to error ${error.javaClass.simpleName}.") },
+                { error -> println(error.description()) },
                 { indexes -> println("${indexes.minAirQualityIndex().cityName} has the cleaner air quality index.")}
             )
 }

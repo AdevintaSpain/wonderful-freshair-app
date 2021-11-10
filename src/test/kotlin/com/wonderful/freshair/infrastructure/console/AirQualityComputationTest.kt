@@ -8,8 +8,8 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import com.wonderful.freshair.domain.AirQualityIndex
 import com.wonderful.freshair.domain.CityAirQualityService
-import com.wonderful.freshair.domain.error.CityNotFoundError
-import com.wonderful.freshair.domain.error.EmptyPollutionDataError
+import com.wonderful.freshair.domain.error.ApplicationError.CityNotFoundError
+import com.wonderful.freshair.domain.error.ApplicationError.EmptyPollutionDataError
 import com.wonderful.freshair.infrastructure.City
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -79,7 +79,7 @@ class AirQualityComputationTest {
         val index = 1.50
         val expectedIndex = BigDecimal(index).setScale(2, RoundingMode.HALF_UP)
         whenever(cityAirQualityService.averageIndex(City(barcelona, country)))
-            .thenReturn(CityNotFoundError.left())
+            .thenReturn(CityNotFoundError(City(barcelona, country)).left())
         whenever(cityAirQualityService.averageIndex(City(madrid, country)))
             .thenReturn(AirQualityIndex(madrid, index).right())
 

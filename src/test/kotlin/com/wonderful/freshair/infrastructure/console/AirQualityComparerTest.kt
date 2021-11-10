@@ -7,7 +7,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.wonderful.freshair.domain.AirQualityIndex
 import com.wonderful.freshair.domain.CityAirQualityService
-import com.wonderful.freshair.domain.error.CityNotFoundError
+import com.wonderful.freshair.domain.error.ApplicationError.CityNotFoundError
 import com.wonderful.freshair.infrastructure.City
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -66,7 +66,7 @@ class AirQualityComparerTest {
         whenever(cityAirQualityService.averageIndex(City(barcelona, country)))
             .thenReturn(AirQualityIndex(barcelona, barcelonaIndex).right())
         whenever(cityAirQualityService.averageIndex(City(madrid, country)))
-            .thenReturn(CityNotFoundError.left())
+            .thenReturn(CityNotFoundError(City(madrid, country)).left())
 
         airQualityComparer.compare(cities)
 
