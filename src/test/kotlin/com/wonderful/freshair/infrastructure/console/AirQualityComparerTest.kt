@@ -71,6 +71,6 @@ class AirQualityComparerTest {
         airQualityComparer.compare(cities)
 
         assertThat(outputStreamCaptor.toString().trim())
-            .isEqualTo("Cannot compare air quality due to error CityNotFoundError.")
+            .isEqualTo("Cannot compute air quality index due to city of Madrid,ES not found")
     }
 }

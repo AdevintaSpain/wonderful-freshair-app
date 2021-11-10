@@ -4,7 +4,6 @@ import arrow.core.left
 import arrow.core.nonEmptyListOf
 import arrow.core.right
 import assertk.assertThat
-import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import com.wonderful.freshair.domain.AirQualityIndex
 import com.wonderful.freshair.domain.CityAirQualityService
@@ -59,7 +58,7 @@ class AirQualityComputationTest {
     }
 
     @Test
-    fun `should omit output when no data`() {
+    fun `should show error when no data`() {
         val city = "Barcelon"
         val country = "ES"
         val cities = nonEmptyListOf("$city,$country")
@@ -67,11 +66,12 @@ class AirQualityComputationTest {
 
         airQualityComputation.compute(cities)
 
-        assertThat(outputStreamCaptor.toString().trim()).isEmpty()
+        assertThat(outputStreamCaptor.toString().trim())
+            .isEqualTo("Cannot compute air quality index due to empty pollution data")
     }
 
     @Test
-    fun `should omit output for cities with errors`() {
+    fun `should show error for cities with errors`() {
         val barcelona = "Barcelon"
         val madrid = "Madrid"
         val country = "ES"
@@ -86,6 +86,10 @@ class AirQualityComputationTest {
         airQualityComputation.compute(cities)
 
         assertThat(outputStreamCaptor.toString().trim())
-            .isEqualTo("$madrid average air quality index forecast is $expectedIndex")
+            .isEqualTo("""
+                Cannot compute air quality index due to city of $barcelona,$country not found
+                $madrid average air quality index forecast is $expectedIndex
+                """.trimIndent()
+            )
     }
 }
