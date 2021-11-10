@@ -73,4 +73,25 @@ class AirQualityComparerTest {
         assertThat(outputStreamCaptor.toString().trim())
             .isEqualTo("Cannot compute air quality index due to city of Madrid,ES not found")
     }
+
+
+    @Test
+    fun `should fail with all errors if cannot compute air quality for two city`() {
+        val country = "ES"
+        val barcelona = "Barcelon"
+        val madrid = "Madri"
+        val cities = nonEmptyListOf("$barcelona,$country", "$madrid,$country")
+        whenever(cityAirQualityService.averageIndex(City(barcelona, country)))
+            .thenReturn(CityNotFoundError(City(barcelona, country)).left())
+        whenever(cityAirQualityService.averageIndex(City(madrid, country)))
+            .thenReturn(CityNotFoundError(City(madrid, country)).left())
+
+        airQualityComparer.compare(cities)
+
+        assertThat(outputStreamCaptor.toString().trim())
+            .isEqualTo("""
+                Cannot compute air quality index due to city of Barcelon,ES not found
+                Cannot compute air quality index due to city of Madri,ES not found
+            """.trimIndent())
+    }
 }
