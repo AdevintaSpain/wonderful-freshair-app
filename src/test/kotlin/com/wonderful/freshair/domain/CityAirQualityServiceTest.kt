@@ -4,8 +4,8 @@ import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.wonderful.freshair.domain.error.CityNotFoundError
-import com.wonderful.freshair.domain.error.EmptyPollutionDataError
+import com.wonderful.freshair.domain.error.ApplicationError.CityNotFoundError
+import com.wonderful.freshair.domain.error.ApplicationError.EmptyPollutionDataError
 import com.wonderful.freshair.infrastructure.City
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -49,9 +49,9 @@ class CityAirQualityServiceTest {
         val cityName = "Barcelona"
         val countryCode = "ES"
         val city = City(cityName, countryCode)
-        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(CityNotFoundError.left())
+        whenever(cityGeocodingService.getGeoCoordinates(city)).thenReturn(CityNotFoundError(city).left())
 
-        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(CityNotFoundError.left())
+        assertThat(cityAirQualityService.averageIndex(city)).isEqualTo(CityNotFoundError(city).left())
     }
 
     @Test

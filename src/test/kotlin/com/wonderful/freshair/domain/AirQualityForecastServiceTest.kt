@@ -4,12 +4,11 @@ import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isInstanceOf
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
-import com.wonderful.freshair.domain.error.EmptyPollutionDataError
+import com.wonderful.freshair.domain.error.ApplicationError.EmptyPollutionDataError
 import com.wonderful.freshair.infrastructure.api.OWMAirQualityForecastService
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -80,6 +79,6 @@ class AirQualityForecastServiceTest {
 
         val airQualityForecasts = airQualityForecastService.getAirQualityForecast(GeoCoordinates(lat, lon))
 
-        assertThat(airQualityForecasts).isInstanceOf(EmptyPollutionDataError.left()::class)
+        assertThat(airQualityForecasts).isEqualTo(EmptyPollutionDataError.left())
     }
 }

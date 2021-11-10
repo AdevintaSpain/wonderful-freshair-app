@@ -9,7 +9,7 @@ import com.wonderful.freshair.domain.CityGeoCoded
 import com.wonderful.freshair.domain.CityGeoCodingService
 import com.wonderful.freshair.domain.GeoCoordinates
 import com.wonderful.freshair.domain.error.ApplicationError
-import com.wonderful.freshair.domain.error.CityNotFoundError
+import com.wonderful.freshair.domain.error.ApplicationError.CityNotFoundError
 import com.wonderful.freshair.infrastructure.City
 import java.net.URL
 import java.net.http.HttpClient
@@ -47,7 +47,7 @@ class OWMCityGeoCodingService(
                     GeoCoordinates(it.lat, it.lon)
                 )
             }.firstOrNull()
-        ).mapLeft { CityNotFoundError }
+        ).mapLeft { CityNotFoundError(city) }
     }
 
 }

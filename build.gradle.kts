@@ -1,6 +1,8 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	kotlin("jvm") version "1.4.32"
@@ -18,7 +20,7 @@ repositories {
 dependencies {
 
 	// Arrow
-	implementation("io.arrow-kt:arrow-core:0.13.2")
+	implementation("io.arrow-kt:arrow-core:1.0.1")
 
 	// JSON
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3")

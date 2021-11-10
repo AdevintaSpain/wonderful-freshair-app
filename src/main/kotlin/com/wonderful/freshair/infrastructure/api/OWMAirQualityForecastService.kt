@@ -11,7 +11,7 @@ import com.wonderful.freshair.domain.AirQualityForecast
 import com.wonderful.freshair.domain.AirQualityForecastService
 import com.wonderful.freshair.domain.GeoCoordinates
 import com.wonderful.freshair.domain.error.ApplicationError
-import com.wonderful.freshair.domain.error.EmptyPollutionDataError
+import com.wonderful.freshair.domain.error.ApplicationError.EmptyPollutionDataError
 import java.net.URL
 import java.net.http.HttpClient
 import java.net.http.HttpRequest

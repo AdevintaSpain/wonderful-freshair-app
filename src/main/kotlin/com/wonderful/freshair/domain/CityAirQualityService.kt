@@ -4,13 +4,6 @@ import arrow.core.Either
 import arrow.core.computations.either
 import com.wonderful.freshair.domain.error.ApplicationError
 import com.wonderful.freshair.infrastructure.City
-import java.math.BigDecimal
-import java.math.RoundingMode
-
-data class AirQualityIndex(val cityName : String, private val doubleIndex: Double) {
-    val index: BigDecimal = BigDecimal(doubleIndex)
-        .setScale(2, RoundingMode.HALF_UP)
-}
 
 class CityAirQualityService(
     private val cityGeocodingService: CityGeoCodingService,
