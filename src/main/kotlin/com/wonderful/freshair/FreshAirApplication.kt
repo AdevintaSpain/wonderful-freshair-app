@@ -27,6 +27,10 @@ fun main(args: Array<String>) {
 
   for (argument in arguments.keys) {
     val cities = arguments[argument] ?: emptyList()
+    if (cities.isEmpty()) {
+      println("City list should not be empty.")
+      break
+    }
     when (argument) {
       "--city" -> airQualityComputation.compute(cities)
       "--compare" -> airQualityComparer.compare(cities)
