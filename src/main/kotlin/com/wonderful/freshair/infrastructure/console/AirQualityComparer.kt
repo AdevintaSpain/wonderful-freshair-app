@@ -18,7 +18,7 @@ class AirQualityComparer(
             .map { cityAirQualityService.averageIndex(it) }
             .sequenceEither()
             .bind()
-        val cleanestCity = airQualityIndex.maxWithOrNull(Comparator.comparing(AirQualityIndex::index))
+        val cleanestCity = airQualityIndex.minWithOrNull(Comparator.comparing(AirQualityIndex::index))
         if (cleanestCity != null)
             println("${cleanestCity.cityName} has the cleaner air quality index.")
         else

@@ -52,7 +52,7 @@ class AirQualityComparerTest {
         airQualityComparer.compare(cities)
 
         assertThat(outputStreamCaptor.toString().trim())
-            .isEqualTo("$barcelona has the cleaner air quality index.")
+            .isEqualTo("$madrid has the cleaner air quality index.")
     }
 
     @Test
