@@ -3,6 +3,7 @@ package com.wonderful.freshair.domain
 import arrow.core.nonEmptyListOf
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isTrue
 import org.junit.jupiter.api.Test
 
 class AirQualityIndexTest {
@@ -18,5 +19,17 @@ class AirQualityIndexTest {
         val indexes = nonEmptyListOf(barcelonaQualityIndex, madridQualityIndex)
 
         assertThat(indexes.minAirQualityIndex()).isEqualTo(madridQualityIndex)
+    }
+
+    @Test
+    fun `should compare air quality index`() {
+        val barcelona = "Barcelona"
+        val barcelonaIndex = 1.50
+        val madrid = "Madrid"
+        val madridIndex = 1.49
+        val barcelonaQualityIndex = AirQualityIndex(barcelona, barcelonaIndex)
+        val madridQualityIndex = AirQualityIndex(madrid, madridIndex)
+
+        assertThat(barcelonaQualityIndex > madridQualityIndex).isTrue()
     }
 }

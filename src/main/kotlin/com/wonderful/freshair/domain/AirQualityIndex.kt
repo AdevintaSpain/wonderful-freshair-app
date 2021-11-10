@@ -10,4 +10,7 @@ data class AirQualityIndex(val cityName : String, private val doubleIndex: Doubl
 }
 
 fun NonEmptyList<AirQualityIndex>.minAirQualityIndex(): AirQualityIndex = this
-    .foldLeft(this.head) { x, y -> if (x.index < y.index) x else y }
+    .foldLeft(this.head) { x, y -> if (x < y) x else y }
+
+operator fun AirQualityIndex.compareTo(airQualityIndex: AirQualityIndex): Int =
+    this.index.compareTo(airQualityIndex.index)
