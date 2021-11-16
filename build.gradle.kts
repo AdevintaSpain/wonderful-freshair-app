@@ -5,7 +5,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm") version "1.4.32"
+	kotlin("jvm") version "1.5.30"
 	application
 }
 
@@ -37,6 +37,11 @@ dependencies {
 
 	// Mockito
 	testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
+
+	// Kotest
+	testImplementation("io.kotest:kotest-property:4.6.3")
+	testImplementation("io.kotest:kotest-runner-junit5:4.6.3")
+	testImplementation("io.kotest:kotest-assertions-core:4.6.3")
 }
 
 tasks.withType<KotlinCompile> {
