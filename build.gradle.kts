@@ -23,20 +23,21 @@ dependencies {
 	implementation("io.arrow-kt:arrow-core:1.0.1")
 
 	// JSON
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
 
 	// Junit 5
-	testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
-	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+	testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.1")
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 
 	// AssertK
-	testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.24")
+	testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.25")
 
 	// WireMock
-	testImplementation("com.github.tomakehurst:wiremock-jre8:2.27.2")
+	testImplementation("com.github.tomakehurst:wiremock-jre8:2.31.0")
 
 	// Mockito
-	testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
+	testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 
 	// Kotest
 	testImplementation("io.kotest:kotest-property:4.6.3")
